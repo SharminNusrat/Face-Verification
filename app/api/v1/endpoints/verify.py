@@ -2,9 +2,8 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.schemas.verification import FaceVerificationResponse
 from app.services.face_matcher import FaceMatcher
 from app.core.config import settings
-import shutil
-import os
-import tempfile
+import cv2
+import numpy as np
 
 router = APIRouter()
 
@@ -16,27 +15,28 @@ async def verify_faces(
     """
     Verify if two face images belong to the same person.
     """
-    # Create temp files
-    # Use .jpg as default suffix if filename is missing extension or handle generically
-    suffix1 = os.path.splitext(file1.filename)[1] if file1.filename else ".jpg"
-    suffix2 = os.path.splitext(file2.filename)[1] if file2.filename else ".jpg"
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix1) as tmp1:
-        shutil.copyfileobj(file1.file, tmp1)
-        tmp1_path = tmp1.name
-    
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix2) as tmp2:
-        shutil.copyfileobj(file2.file, tmp2)
-        tmp2_path = tmp2.name
-
     try:
-        # Call the service
+        # Read image files into numpy arrays
+        contents1 = await file1.read()
+        nparr1 = np.frombuffer(contents1, np.uint8)
+        img1 = cv2.imdecode(nparr1, cv2.IMREAD_COLOR)
+
+        contents2 = await file2.read()
+        nparr2 = np.frombuffer(contents2, np.uint8)
+        img2 = cv2.imdecode(nparr2, cv2.IMREAD_COLOR)
+
+        if img1 is None or img2 is None:
+             raise HTTPException(status_code=400, detail="Invalid image data")
+
+        # Call the service passing numpy arrays directly
         result = FaceMatcher.verify(
-            img1_path=tmp1_path,
-            img2_path=tmp2_path,
+            img1_path=img1,
+            img2_path=img2,
             model_name=settings.FACE_MODEL_NAME,
             metric=settings.DISTANCE_METRIC
         )
+        
+        print(f"Result: {result}")
         
         return FaceVerificationResponse(
             verified=result.get("verified"),
@@ -48,16 +48,3 @@ async def verify_faces(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
-    finally:
-        # Cleanup temp files
-        if os.path.exists(tmp1_path):
-            try:
-                os.remove(tmp1_path)
-            except:
-                pass
-        if os.path.exists(tmp2_path):
-            try:
-                os.remove(tmp2_path)
-            except:
-                pass

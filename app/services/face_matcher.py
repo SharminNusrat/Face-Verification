@@ -3,11 +3,13 @@ from deepface import DeepFace
 
 class FaceMatcher:
     @staticmethod
-    def verify(img1_path: str, img2_path: str, model_name: str = "ArcFace", metric: str = "cosine"):
+    def verify(img1_path, img2_path, model_name: str = "ArcFace", metric: str = "cosine"):
         """
         Verifies if two images belong to the same person.
+        Accepts image paths (str) or numpy arrays (BGR).
         """
         try:
+            # DeepFace.verify accepts numpy arrays for img1_path and img2_path arguments
             result = DeepFace.verify(
                 img1_path=img1_path,
                 img2_path=img2_path,
