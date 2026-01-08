@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+python-multipart
+deepface
+tf-keras
+opencv-python
+pillow
+pydantic
+pydantic-settings
+requests
+pytest
+httpx
