@@ -46,5 +46,8 @@ async def verify_faces(
             similarity_metric=result.get("similarity_metric")
         )
 
+    except ValueError as e:
+        # Handle specific validation errors (e.g., multiple faces)
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
