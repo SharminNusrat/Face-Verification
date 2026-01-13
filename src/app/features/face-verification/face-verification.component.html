@@ -1,0 +1,62 @@
+<div class="app-container">
+    <header class="main-header">
+        <h1>Face Verification System</h1>
+    </header>
+
+    <div class="content-area">
+        <div class="upload-section">
+            <!-- Image 1 -->
+            <div class="upload-card">
+                <h3>Reference Image</h3>
+                <div class="upload-box" (click)="fileInput1.click()" [class.has-image]="image1Preview">
+                    <img *ngIf="image1Preview" [src]="image1Preview" alt="Reference Image">
+                    <div *ngIf="!image1Preview" class="placeholder-content">
+                        <span class="icon"></span>
+                        <p>Click to upload Reference Image</p>
+                    </div>
+                </div>
+                <input #fileInput1 type="file" (change)="onFileSelected($event, 1)" accept="image/*" hidden>
+            </div>
+
+            <!-- Image 2 -->
+            <div class="upload-card">
+                <h3>Verification Image</h3>
+                <div class="upload-box" (click)="fileInput2.click()" [class.has-image]="image2Preview">
+                    <img *ngIf="image2Preview" [src]="image2Preview" alt="Verification Image">
+                    <div *ngIf="!image2Preview" class="placeholder-content">
+                        <span class="icon"></span>
+                        <p>Click to upload Verification Image</p>
+                    </div>
+                </div>
+                <input #fileInput2 type="file" (change)="onFileSelected($event, 2)" accept="image/*" hidden>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="verify-btn" (click)="verify()" [disabled]="loading || !image1 || !image2">
+                <span *ngIf="loading" class="spinner"></span>
+                {{ loading ? 'Verifying...' : 'Verify Images' }}
+            </button>
+        </div>
+
+        <!-- Results Display -->
+        <div *ngIf="error" class="message error">
+            <strong>Error:</strong> {{ error }}
+            <p class="suggestion">Make sure your backend is running at http://localhost:8000 and CORS is enabled.</p>
+        </div>
+
+        <div *ngIf="result" class="result-card" [class.match]="result.verified" [class.no-match]="!result.verified">
+            <div class="result-header">
+                <span class="result-icon">{{ result.verified ? '✓' : '✕' }}</span>
+                <h2>{{ result.verified ? 'Verification Successful' : 'Verification Failed' }}</h2>
+            </div>
+
+            <!-- <div class="metrics">
+                <div class="metric-item">
+                    <label>Processing Time</label>
+                    <div class="value">{{ result.time | number:'1.2-2' }}s</div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>

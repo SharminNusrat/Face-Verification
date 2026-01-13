@@ -1,0 +1,248 @@
+/* Global reset for this component's scope */
+:host {
+  display: block;
+  font-family: 'Segoe UI', padding-box, sans-serif;
+  background-color: #f0f4f8;
+  /* Very light cool gray/blue background */
+  min-height: 100vh;
+}
+
+.main-header {
+  background: white;
+  color: #334e68;
+  /* Slate blue */
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  text-align: center;
+  border-bottom: 1px solid #d9e2ec;
+}
+
+.main-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #102a43;
+  /* Darker slate */
+}
+
+.content-area {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 0 20px;
+}
+
+.upload-section {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.upload-card {
+  flex: 1;
+  min-width: 280px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 10px 15px rgba(0, 0, 0, 0.03);
+  /* Soft, refined shadow */
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.upload-card:hover {
+  transform: translateY(-2px);
+}
+
+.upload-card h3 {
+  margin-top: 0;
+  color: #486581;
+  /* Muted slate blue */
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.upload-box {
+  background: #f8fafc;
+  /* Very light blue-gray */
+  border: 2px dashed #bcccdc;
+  border-radius: 12px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.upload-box:hover {
+  border-color: #627d98;
+  background-color: #f0f4f8;
+}
+
+.upload-box.has-image {
+  border-style: solid;
+  border-color: #334e68;
+  background-color: white;
+}
+
+.placeholder-content {
+  color: #829ab1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.placeholder-content .icon {
+  font-size: 2.5rem;
+  opacity: 0.8;
+}
+
+.upload-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.actions {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.verify-btn {
+  background: linear-gradient(135deg, #334e68 0%, #102a43 100%);
+  /* Sophisticated dark blue gradient */
+  color: white;
+  border: none;
+  padding: 1rem 3.5rem;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(16, 42, 67, 0.25);
+  transition: all 0.2s;
+}
+
+.verify-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 42, 67, 0.3);
+}
+
+.verify-btn:disabled {
+  background: #bcccdc;
+  color: #f0f4f8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Results & Messages */
+.message.error {
+  background-color: #fff5f5;
+  border-left: 4px solid #e53e3e;
+  color: #c53030;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.result-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  margin-top: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-header {
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.match .result-header {
+  background: linear-gradient(135deg, #38a169 0%, #276749 100%);
+  /* Green gradient */
+}
+
+.no-match .result-header {
+  background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%);
+  /* Red gradient */
+}
+
+.result-icon {
+  font-size: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.result-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.metrics {
+  padding: 1.5rem;
+  background: white;
+  display: flex;
+  justify-content: center;
+}
+
+.metric-item {
+  text-align: center;
+  background: #f0f4f8;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+}
+
+.metric-item label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #829ab1;
+  margin-bottom: 0.3rem;
+}
+
+.metric-item .value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #334e68;
+}
