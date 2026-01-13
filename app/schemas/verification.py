@@ -7,7 +7,7 @@ class FaceVerificationRequest(BaseModel):
 
 class FaceVerificationResponse(BaseModel):
     verified: bool
-    distance: float
-    threshold: float
-    model: str
-    similarity_metric: str
+    distance: float | None = None
+    threshold: float | None = None
+    model: str | None = None
+    similarity_metric: str | None = None

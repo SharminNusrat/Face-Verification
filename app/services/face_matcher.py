@@ -1,5 +1,5 @@
 from deepface import DeepFace
-# from app.core.config import settings
+from app.core.config import settings
 
 class FaceMatcher:
     @staticmethod
@@ -17,6 +17,14 @@ class FaceMatcher:
                 distance_metric=metric,
                 enforce_detection=False # Set to False to avoid errors if face is not clear, can be parameterized
             )
+            # Apply custom threshold
+            distance = result.get('distance')
+            threshold = settings.FACE_MATCH_THRESHOLD
+            
+            # Override verification decision based on custom threshold
+            result['verified'] = distance <= threshold
+            result['threshold'] = threshold
+            
             print(f"Result: {result}")
             return result
         except Exception as e:
