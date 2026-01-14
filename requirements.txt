@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+insightface
+onnxruntime
+opencv-python-headless
+numpy
+scikit-learn
+pydantic

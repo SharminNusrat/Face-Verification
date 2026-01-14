@@ -1,0 +1,19 @@
+==================================================
+FINAL EVALUATION RESULTS
+==================================================
+Threshold: 0.45 (cosine similarity)
+--------------------------------------------------
+True Positives  (TP):    438  [Same person, matched]
+False Negatives (FN):    106  [Same person, NOT matched]
+True Negatives  (TN):    581  [Diff person, NOT matched]
+False Positives (FP):      0  [Diff person, matched]
+==================================================
+Overall Accuracy: 90.58%
+TAR (True Accept Rate / Recall): 80.51%
+FAR (False Accept Rate): 0.00%
+==================================================
+
+Mismatch images saved to: ./evaluation_results
+  - FN (missed same person): ./evaluation_results\FN_false_negative
+  - FP (wrongly matched diff person): ./evaluation_results\FP_false_positive
+==================================================
