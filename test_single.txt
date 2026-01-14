@@ -1,0 +1,15 @@
+============================================================
+FINAL EVALUATION RESULTS
+============================================================
+Threshold: 0.45 (cosine similarity)
+Total Images Skipped: 191 (multiple/no faces)
+------------------------------------------------------------
+True Positives  (TP):    429  [Same person, matched]
+False Negatives (FN):     14  [Same person, NOT matched]
+True Negatives  (TN):    486  [Diff person, NOT matched]
+False Positives (FP):      0  [Diff person, matched]
+============================================================
+Overall Accuracy: 98.49%
+TAR (True Accept Rate / Recall): 96.84%
+FAR (False Accept Rate): 0.00%
+============================================================
