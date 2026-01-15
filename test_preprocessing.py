@@ -25,11 +25,20 @@ def test_preprocessing(image_path):
         
         # Display results
         face_data = results.get("checks", {}).get("face_detection", {})
+        glass_data = results.get("checks", {}).get("glass_detection", {})
+        
         print("\n--- Detection Results ---")
         print(f"Status: {results.get('status')}")
         print(f"Message: {results.get('message')}")
-        print(f"Face Count: {face_data.get('face_count')}")
-        print(f"BBoxes: {face_data.get('bboxes')}")
+        
+        if face_data:
+            print(f"Face Count: {face_data.get('face_count')}")
+            # print(f"Face BBoxes: {face_data.get('bboxes')}")
+            
+        if glass_data:
+            # print(f"Glass Detected: {glass_data.get('glass_detected')}")
+            print(f"Glass Count: {glass_data.get('glass_count')}")
+            
         print("-------------------------")
         
     except Exception as e:

@@ -52,4 +52,4 @@ class YOLOFaceDetector:
         }
 
 # Singleton instance can be created here or in manager
-yolo_detector = YOLOFaceDetector()
+yolo_face_detector = YOLOFaceDetector()
