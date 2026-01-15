@@ -1,5 +1,6 @@
 from app.preprocessing.multiple_face_detection.yolo_face_detector import yolo_face_detector
 from app.preprocessing.face_glass_detection.yolo_glass_detector import yolo_glass_detector
+from app.preprocessing.head_pose_detection.head_pose_detector import head_pose_detector
 import numpy as np
 
 class PreprocessingManager:
@@ -7,7 +8,7 @@ class PreprocessingManager:
         # Flags to enable/disable specific tasks
         self.enable_multiple_face_detection = True
         self.enable_face_glass_detection = True
-        # self.enable_task3 = False # Placeholder
+        self.enable_head_pose_detection = True
 
     def preprocess(self, image: np.ndarray):
         """
@@ -47,9 +48,23 @@ class PreprocessingManager:
                  else:
                      results["message"] = glass_result["message"]
                  
-        # Task 3: Placeholder
-        # if self.enable_task3:
-        #     pass
+        # Task 3: Head Pose Detection
+        if self.enable_head_pose_detection:
+            pose_result = head_pose_detector.get_direction(image)
+            results["checks"]["head_pose"] = pose_result
+            
+            # Logic: If not looking forward, warn?
+            if pose_result["direction"] != "Looking Forward":
+                 # We don't overwrite "error" status, only success or warning
+                 if results["status"] != "error":
+                      results["status"] = "warning"
+                 
+                 current_msg = results.get("message", "")
+                 msg_part = f"Head Pose: {pose_result['direction']}"
+                 if current_msg:
+                     results["message"] = f"{current_msg} | {msg_part}"
+                 else:
+                     results["message"] = msg_part
 
         return results
 

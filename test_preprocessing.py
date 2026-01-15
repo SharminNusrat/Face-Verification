@@ -36,8 +36,15 @@ def test_preprocessing(image_path):
             # print(f"Face BBoxes: {face_data.get('bboxes')}")
             
         if glass_data:
-            # print(f"Glass Detected: {glass_data.get('glass_detected')}")
+            print(f"Glass Detected: {glass_data.get('glass_detected')}")
             print(f"Glass Count: {glass_data.get('glass_count')}")
+
+        pose_data = results.get("checks", {}).get("head_pose", {})
+        if pose_data:
+             print(f"Head Direction: {pose_data.get('direction')}")
+             angles = pose_data.get('angles')
+             if angles:
+                 print(f"Angles (Pitch, Yaw, Roll): ({angles[0]:.1f}, {angles[1]:.1f}, {angles[2]:.1f})")
             
         print("-------------------------")
         
