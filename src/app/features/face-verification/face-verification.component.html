@@ -45,11 +45,21 @@
             <p class="suggestion">Make sure your backend is running at http://localhost:8000 and CORS is enabled.</p>
         </div>
 
-        <div *ngIf="result" class="result-card" [class.match]="result.verified" [class.no-match]="!result.verified">
+        <div *ngIf="result" class="result-card" [class.match]="result.match" [class.no-match]="!result.match">
             <div class="result-header">
-                <span class="result-icon">{{ result.verified ? '✓' : '✕' }}</span>
-                <h2>{{ result.verified ? 'Verification Successful' : 'Verification Failed' }}</h2>
+                <span class="result-icon">{{ result.match ? '✓' : '✕' }}</span>
+                <h2>{{ result.match ? 'Verification Successful' : 'Verification Failed' }}</h2>
             </div>
+            <div class="metrics">
+                <div class="metric-item">
+                     <label>Score</label>
+                     <div class="value">{{ result.score | number:'1.2-4' }}</div>
+                 </div>
+                 <div class="metric-item" *ngIf="result.error">
+                     <label>Error</label>
+                     <div class="value error-text">{{ result.error }}</div>
+                 </div>
+             </div>
 
             <!-- <div class="metrics">
                 <div class="metric-item">

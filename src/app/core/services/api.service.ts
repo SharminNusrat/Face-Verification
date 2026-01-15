@@ -13,8 +13,8 @@ export class ApiService {
 
     verifyFaces(image1: File, image2: File): Observable<VerificationResponse> {
         const formData = new FormData();
-        formData.append('file1', image1);
-        formData.append('file2', image2);
+        formData.append('image1', image1);
+        formData.append('image2', image2);
 
         return this.http.post<VerificationResponse>(this.apiUrl, formData);
     }

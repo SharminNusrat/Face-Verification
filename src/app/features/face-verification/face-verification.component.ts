@@ -59,6 +59,9 @@ export class FaceVerificationComponent {
             .subscribe({
                 next: (response) => {
                     console.log('Verification success:', response);
+                    if (response.error) {
+                        this.error = response.error;
+                    }
                     this.result = response;
                 },
                 error: (err) => {
