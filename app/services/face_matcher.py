@@ -4,6 +4,8 @@ from insightface.app import FaceAnalysis
 from app.core.config import settings
 from sklearn.metrics.pairwise import cosine_similarity
 
+from app.preprocessing import manager as preprocess_manager
+
 class FaceMatcher:
     def __init__(self):
         # providers options: ['CUDAExecutionProvider', 'CPUExecutionProvider']
