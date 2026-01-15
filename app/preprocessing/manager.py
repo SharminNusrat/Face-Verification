@@ -1,12 +1,15 @@
 from app.preprocessing.multiple_face_detection.yolo_face_detector import yolo_face_detector
 from app.preprocessing.face_glass_detection.yolo_glass_detector import yolo_glass_detector
+from app.preprocessing.head_pose_detection.HeadPoseDetector import head_pose_detector
+from app.core.config import settings
 import numpy as np
 
 class PreprocessingManager:
     def __init__(self):
         # Flags to enable/disable specific tasks
-        self.enable_multiple_face_detection = True
-        self.enable_face_glass_detection = True
+        self.enable_multiple_face_detection = settings.ENABLE_MULTIPLE_FACE_DETECTION
+        self.enable_face_glass_detection = settings.ENABLE_FACE_GLASS_DETECTION
+        self.enable_head_pose_detection = settings.ENABLE_HEAD_POSE_DETECTION
         # self.enable_task3 = False # Placeholder
 
     def preprocess(self, image: np.ndarray):
@@ -46,6 +49,18 @@ class PreprocessingManager:
                      results["message"] = f"{current_msg} | {glass_result['message']}"
                  else:
                      results["message"] = glass_result["message"]
+        # Task 3: Head Pose Detection
+        if self.enable_head_pose_detection:
+            head_pose_result = head_pose_detector.get_direction(image)
+            results["checks"]["head_pose_detection"] = head_pose_result
+            
+            if head_pose_result["head_pose"]:
+                 results["status"] = "warning"
+                 current_msg = results.get("message", "")
+                 if current_msg:
+                     results["message"] = f"{current_msg} | {head_pose_result['message']}"
+                 else:
+                     results["message"] = head_pose_result["message"]
                  
         # Task 3: Placeholder
         # if self.enable_task3:
