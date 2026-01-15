@@ -5,9 +5,6 @@ import numpy as np
 import logging
 from collections import defaultdict
 
-# ===============================
-# 1. ENVIRONMENT & LOGGING
-# ===============================
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -33,8 +30,8 @@ except ImportError:
 # ===============================
 # 2. CONFIG
 # ===============================
-ROOT_DIR = "testset"
-OUTPUT_BASE = "./evaluation_results"
+ROOT_DIR = "./data/input"
+OUTPUT_BASE = "./data/output/evaluation_results"
 VALID_EXTENSIONS = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
 
 # Production-grade threshold (strict for banking scenarios)

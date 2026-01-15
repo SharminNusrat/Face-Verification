@@ -2,7 +2,9 @@ import sys
 import cv2
 import os
 # Add project root to path so we can import app
-sys.path.append(os.getcwd())
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
 
 from app.preprocessing import preprocess_manager
 
@@ -52,7 +54,8 @@ def test_preprocessing(image_path):
         print(f"An error occurred during preprocessing: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python test_preprocessing.py <path_to_image>")
-    else:
-        test_preprocessing(sys.argv[1])
+    # Hardcoded path to image in data/input
+    # Since we are in scripts/ directory, we go up one level then into data/input
+    image_name = "0000000.jpg"
+    image_path = os.path.join(project_root, "data", "input", image_name)
+    test_preprocessing(image_path)

@@ -13,3 +13,5 @@ testset/
 *.swo
 models/
 !models/.gitkeep
+data/trainset
+data/output/evaluation_results

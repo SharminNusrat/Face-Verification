@@ -25,7 +25,10 @@ except ImportError:
 # ===============================
 # 2. CONFIG
 # ===============================
-ROOT_DIR = "testset"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+ROOT_DIR = os.path.join(project_root, "data", "input")
+
 OUTPUT_BASE = "./evaluation_results"
 VALID_EXTENSIONS = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
 
