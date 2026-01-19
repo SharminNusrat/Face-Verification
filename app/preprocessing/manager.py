@@ -1,5 +1,5 @@
 from app.preprocessing.multiple_face_detection.yolo_face_detector import yolo_face_detector
-from app.preprocessing.face_glass_detection.yolo_glass_detector import yolo_glass_detector
+from app.preprocessing.face_glass_detection.glass_detector import glass_detector
 from app.preprocessing.head_pose_detection.HeadPoseDetector import head_pose_detector
 from app.core.config import settings
 import numpy as np
@@ -39,7 +39,7 @@ class PreprocessingManager:
         
         # Task 2: Face Glass Detection
         if self.enable_face_glass_detection:
-            glass_result = yolo_glass_detector.detect_glasses(image)
+            glass_result = glass_detector.detect_glass(image)
             results["checks"]["glass_detection"] = glass_result
             
             if glass_result["glass_detected"]:

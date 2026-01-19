@@ -11,6 +11,7 @@ router = APIRouter()
 @router.post("/face/verify", response_model=VerifyResponse)
 async def verify_faces(image1: UploadFile = File(...), image2: UploadFile = File(...)):
     try:
+        print("Received images") # debugging log
         img1_bytes = await image1.read()
         img2_bytes = await image2.read()
 
@@ -27,7 +28,7 @@ async def verify_faces(image1: UploadFile = File(...), image2: UploadFile = File
             return {
                 "match": False,
                 "score": 0.0,
-                "error": "provided images did not follow the guidelines !!!"
+                "error": f"{result_1['message']} {result_2['message']}"
             }
 
         result = face_matcher.compare_faces(img1_bytes, img2_bytes)
