@@ -62,7 +62,7 @@ export class FaceVerificationComponent {
                     if (response.error) {
                         this.error = response.error;
                     }
-                    this.result = response;
+                    this.result = response
                 },
                 error: (err) => {
                     console.error('Verification error:', err);

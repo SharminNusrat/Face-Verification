@@ -52,14 +52,14 @@
             </div>
             <div class="metrics">
                 <div class="metric-item">
-                     <label>Score</label>
-                     <div class="value">{{ result.score | number:'1.2-4' }}</div>
-                 </div>
-                 <div class="metric-item" *ngIf="result.error">
-                     <label>Error</label>
-                     <div class="value error-text">{{ result.error }}</div>
-                 </div>
-             </div>
+                    <label>Score</label>
+                    <div class="value">{{ result.score * 100 | number:'1.0-2' }} %</div>
+                </div>
+                <div class="metric-item" *ngIf="result.error">
+                    <label>Error</label>
+                    <div class="value error-text">{{ result.error }}</div>
+                </div>
+            </div>
 
             <!-- <div class="metrics">
                 <div class="metric-item">
