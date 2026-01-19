@@ -35,11 +35,9 @@ def test_preprocessing(image_path):
         
         if face_data:
             print(f"Face Count: {face_data.get('face_count')}")
-            # print(f"Face BBoxes: {face_data.get('bboxes')}")
             
         if glass_data:
             print(f"Glass Detected: {glass_data.get('glass_detected')}")
-            print(f"Glass Count: {glass_data.get('glass_count')}")
 
         pose_data = results.get("checks", {}).get("head_pose", {})
         if pose_data:
