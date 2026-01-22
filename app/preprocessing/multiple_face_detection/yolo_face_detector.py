@@ -25,7 +25,7 @@ class YOLOFaceDetector:
             }
         """
         # YOLO can accept file path, PIL, cv2, etc.
-        results = self.model(image_input, verbose=False)
+        results = self.model(image_input, verbose=False, save=False, save_txt=False, save_conf=False)
         
         result = results[0]
         boxes = result.boxes

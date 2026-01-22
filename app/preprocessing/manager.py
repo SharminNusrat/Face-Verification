@@ -22,7 +22,8 @@ class PreprocessingManager:
         """
         results = {
             "status": "success",
-            "checks": {}
+            "checks": {}, # if we want we can remove this. kept for future proofing
+            "message": ""
         }
 
         # Task 1: Multiple Face Detection
@@ -31,7 +32,7 @@ class PreprocessingManager:
             results["checks"]["face_detection"] = face_result
             
             if face_result["face_count"] > 1:
-                results["status"] = "warning"
+                results["status"] = "severe" #  if we want we can return from here as well
                 results["message"] = face_result["message"]
             elif face_result["face_count"] == 0:
                 results["status"] = "error"
@@ -49,8 +50,12 @@ class PreprocessingManager:
                      results["message"] = f"{current_msg} | {glass_result['message']}"
                  else:
                      results["message"] = glass_result["message"]
+
         # Task 3: Head Pose Detection
-        if self.enable_head_pose_detection:
+        if self.enable_head_pose_detection: # we can set threshold for yaw, pitch, roll
+            # yaw -> rotation in the spinal axis
+            # roll -> rotation in the nose axis
+            # pitch -> rotation in the ear axis # draw a line between two ears
             head_pose_result = head_pose_detector.get_direction(image)
             results["checks"]["head_pose_detection"] = head_pose_result
             

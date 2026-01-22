@@ -24,13 +24,20 @@ async def verify_faces(image1: UploadFile = File(...), image2: UploadFile = File
         result_1 = weeding_manager.preprocess(img1_np)
         result_2 = weeding_manager.preprocess(img2_np)
 
-        if result_1["status"] != "success" or result_2["status"] != "success":
-            return {
-                "match": False,
-                "score": 0.0,
-                "error": f"{result_1['message']} {result_2['message']}"
-            }
-
+        #===================================================================#
+        # we can set here the gate to allow what to pass and what to reject.#
+        #===================================================================#
+        
+        # if result_1["status"] == "success" or result_2["status"] != "success":
+        #     return {
+        #         "match": False,
+        #         "score": 0.0,
+        #         "error": f"{result_1['message']} {result_2['message']}"
+        #     }
+        print(f"result 1: {result_1}") # debugging log
+        print("==========================") # debugging log
+        print(f"result 2: {result_2}") # debugging log
+        
         result = face_matcher.compare_faces(img1_bytes, img2_bytes)
         print(result)  # debugging log
 

@@ -9,7 +9,7 @@ class GlassDetector:
     def __init__(
         self,
         model_path: str = "./app/preprocessing/face_glass_detection/model/glasses_detection.keras",
-        threshold: float = 0.7, # koto percent sure je glass nai.  
+        threshold: float = 0.9, # koto percent sure je glass nai.  
         input_size: tuple[int, int] = (160, 160),
     ):
         """

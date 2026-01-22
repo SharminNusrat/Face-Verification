@@ -54,6 +54,6 @@ def test_preprocessing(image_path):
 if __name__ == "__main__":
     # Hardcoded path to image in data/input
     # Since we are in scripts/ directory, we go up one level then into data/input
-    image_name = "0000000.jpg"
+    image_name = "rakin_portrait.jpg"
     image_path = os.path.join(project_root, "data", "input", image_name)
     test_preprocessing(image_path)

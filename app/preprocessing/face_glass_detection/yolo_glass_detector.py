@@ -24,7 +24,7 @@ class YOLOGlassDetector:
                 "bboxes": list of [x1, y1, x2, y2]
             }
         """
-        results = self.model(image_input, verbose=False)
+        results = self.model(image_input, verbose=False, save=False, save_txt=False, save_conf=False)
         
         result = results[0]
         boxes = result.boxes
