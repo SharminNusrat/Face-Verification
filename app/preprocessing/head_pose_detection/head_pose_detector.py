@@ -1,3 +1,4 @@
+# deprecated.
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -32,28 +33,14 @@ class HeadPoseDetector:
         self.landmarker = vision.FaceLandmarker.create_from_options(options)
 
     def get_direction(self, image_bgr, horizontal_threshold=10, vertical_threshold=30):
-        """
-        Takes a BGR numpy image and returns the direction string and angles.
-        Returns: 
-            dict: {
-                "direction": str,
-                "angles": tuple(pitch, yaw, roll) | None,
-                "message": str
-            }
-        """
         if image_bgr is None:
              return {"direction": "Error", "angles": None, "message": "Image is None"}
 
-        # 1. Convert BGR to RGB
         img_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
         
-        # 2. Convert to MediaPipe Image
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
         
-        # 3. Detect
         detection_result = self.landmarker.detect(mp_image)
-
-        # 4. If no face, return values indicating that
         if not detection_result.face_landmarks:
              return {
                  "direction": "Unknown", 
@@ -61,14 +48,12 @@ class HeadPoseDetector:
                  "message": "No face detected by landmarker"
              }
 
-        # 5. Extract Landmarks & Calculate PnP
         face_landmarks = detection_result.face_landmarks[0]
         img_h, img_w, _ = image_bgr.shape
         
         face_3d = []
         face_2d = []
         
-        # Indices: Nose, Chin, Left Eye, Right Eye, Left Mouth, Right Mouth
         landmark_indices = [1, 199, 33, 263, 61, 291]
 
         for idx in landmark_indices:
@@ -88,7 +73,6 @@ class HeadPoseDetector:
 
         success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
         
-        # 6. Calculate Angles
         rmat, jac = cv2.Rodrigues(rot_vec)
         angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
 
@@ -96,7 +80,6 @@ class HeadPoseDetector:
         y = angles[1] * 360 # Yaw
         z = angles[2] * 360 # Roll
 
-        # 7. Determine Direction
         if y < -horizontal_threshold:
             text = "Looking Left"
         elif y > horizontal_threshold:

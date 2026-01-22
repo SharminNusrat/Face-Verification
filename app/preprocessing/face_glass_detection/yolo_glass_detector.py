@@ -1,3 +1,5 @@
+# deprecated. this doesn't work well.
+
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -12,18 +14,6 @@ class YOLOGlassDetector:
         self.model = YOLO(model_path)
 
     def detect_glasses(self, image_input):
-        """
-        Detects glasses in the image.
-        Args:
-            image_input: path to image or numpy array (cv2 image)
-        Returns:
-            dict: {
-                "glass_detected": bool,
-                "glass_count": int,
-                "message": str,
-                "bboxes": list of [x1, y1, x2, y2]
-            }
-        """
         results = self.model(image_input, verbose=False, save=False, save_txt=False, save_conf=False)
         
         result = results[0]

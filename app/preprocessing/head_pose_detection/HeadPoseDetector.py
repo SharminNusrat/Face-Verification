@@ -49,7 +49,7 @@ class HeadPoseDetector:
             }
 
         # 5. Extract Landmarks & Calculate PnP
-        face_landmarks = detection_result.face_landmarks[0]
+        face_landmarks = detection_result.face_landmarks[0] # there are 468 points in the face landmarks
         img_h, img_w, _ = image_bgr.shape
         
         face_3d = []
@@ -67,6 +67,8 @@ class HeadPoseDetector:
         face_2d = np.array(face_2d, dtype=np.float64)
         face_3d = np.array(face_3d, dtype=np.float64)
 
+
+        # from here the super complex logic begins. 
         focal_length = 1 * img_w
         cam_matrix = np.array([[focal_length, 0, img_w / 2],
                                [0, focal_length, img_h / 2],
@@ -79,7 +81,7 @@ class HeadPoseDetector:
         rmat, jac = cv2.Rodrigues(rot_vec)
         angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
 
-        x = angles[0] * 360 # Pitch
+        x = angles[0] * 360 # Pitch # conversion from euler angle to degree
         y = angles[1] * 360 # Yaw
         z = angles[2] * 360 # Roll
 

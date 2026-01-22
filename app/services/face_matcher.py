@@ -24,8 +24,6 @@ class FaceMatcher:
         if not faces:
             return None # No face detected
         
-        # Assume the largest face is the target? Or strictly the first one.
-        # Let's sort by area just in case
         faces.sort(key=lambda x: (x.bbox[2]-x.bbox[0]) * (x.bbox[3]-x.bbox[1]), reverse=True)
         return faces[0].embedding
 
@@ -40,15 +38,7 @@ class FaceMatcher:
                 "error": "Face not detected in one or both images"
             }
 
-        # Calculate cosine similarity
-        # embeddings are usually normalized in InsightFace, but let's use cosine_similarity for safety
         score = cosine_similarity([emb1], [emb2])[0][0]
-        
-        # Threshold for match (this can be tuned)
-        # Common threshold for arcface/insightface is around 0.3 - 0.5 depending on loss, 
-        # but cosine similarity range is [-1, 1].
-        # InsightFace usually recommends matching if distance < 1.1 (Euclidean) or Sim > threshold.
-        # Let's use a conservative threshold of 0.5 for now, user can tune.
         threshold = 0.5 
         matched = bool(score > threshold)
 
