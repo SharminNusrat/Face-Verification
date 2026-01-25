@@ -8,7 +8,9 @@
 
 ## 📖 Overview
 
-This project provides a secure and efficient backend for face verification. It utilizes **InsightFace** for state-of-the-art face recognition. The system includes advanced preprocessing pipelines to ensure high-quality matching, including checks for multiple faces, glasses, and head pose which are configurable if you want to activate or disable them.
+This project delivers a secure, efficient, and production-ready backend for face verification. It leverages InsightFace, a state-of-the-art face recognition framework, to achieve high-accuracy identity matching.
+
+The system incorporates a configurable and extensible preprocessing pipeline designed to ensure optimal input quality prior to verification. These preprocessing steps include detection and handling of multiple faces, eyeglasses presence, and head pose alignment. Each component can be independently enabled or disabled based on deployment requirements, allowing flexibility without compromising performance or reliability.
 
 ### ✨ Key Features
 
@@ -111,8 +113,8 @@ graph TD
 
 1.  **Clone the repository**
     ```bash
-    git clone <repository_url>
-    cd backend-2(insightface)
+    git clone https://github.com/SharminNusrat/Face-Verification.git
+    cd insightfacebackend
     ```
 
 2.  **Create a Virtual Environment**

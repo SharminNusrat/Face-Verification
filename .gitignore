@@ -16,3 +16,5 @@ models/
 data/trainset
 data/output/evaluation_results
 data/output/runs
+*.svg
+*.png
