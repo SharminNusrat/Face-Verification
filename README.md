@@ -1,31 +1,52 @@
 # 🎭 Face Verification Backend
 
-> A robust, high-performance face verification system powered by **InsightFace** and **FastAPI**.
+> A **robust, high-performance face verification backend** built with **FastAPI** and powered by **InsightFace**.
 
-![Python Version](https://img.shields.io/badge/python-3.10.19-blue.svg)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.95.0+-009688.svg?style=flat&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/python-3.10-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.95.0+-009688.svg?logo=fastapi)
 ![InsightFace](https://img.shields.io/badge/InsightFace-Powered-orange.svg)
-
-## 📖 Overview
-
-This project delivers a secure, efficient, and production-ready backend for face verification. It leverages InsightFace, a state-of-the-art face recognition framework, to achieve high-accuracy identity matching.
-
-The system incorporates a configurable and extensible preprocessing pipeline designed to ensure optimal input quality prior to verification. These preprocessing steps include detection and handling of multiple faces, eyeglasses presence, and head pose alignment. Each component can be independently enabled or disabled based on deployment requirements, allowing flexibility without compromising performance or reliability.
-
-### ✨ Key Features
-
--   **High-Accuracy Verification**: Uses Cosine Similarity on face embeddings.
--   **Advanced Preprocessing**:
-    -   🕵️ **Multiple Face Detection**: Ensures only one person is in the frame.
-    -   👓 **Glass Detection**: Warns or handles users wearing glasses.
-    -   🔄 **Head Pose Detection**: Validates if the user is looking straight at the camera.
--   **Fast & Async**: Built on FastAPI for high performance.
 
 ---
 
-## 🧠 Core Logic Architecture
+## 📖 Overview
 
-The following diagram illustrates the data flow and logic of the verification process:
+This project provides a **secure and production-ready backend** for face verification using **InsightFace**, one of the most accurate open-source face recognition frameworks.
+
+The system is designed with a **modular preprocessing pipeline** to ensure high-quality inputs before verification. Each preprocessing step is configurable and can be independently enabled or disabled based on deployment requirements.
+
+The backend is optimized for **accuracy, extensibility, and performance**, making it suitable for real-world identity verification systems.
+
+---
+
+## ✨ Key Features
+
+* **High-Accuracy Face Verification**
+
+  * Cosine similarity on deep face embeddings
+* **Advanced Preprocessing Pipeline**
+
+  * 🕵️ **Multiple Face Detection** — rejects images with more than one face
+  * 👓 **Glasses Detection** — warns or restricts users wearing glasses
+  * 🔄 **Head Pose Detection** — ensures the face is frontal
+* **Configurable & Modular**
+
+  * Enable/disable each preprocessing step via environment variables
+* **Fast & Asynchronous**
+
+  * Built with FastAPI for high-performance inference
+
+---
+
+## 🧠 System Architecture
+
+### High-Level Flow
+
+1. Each image is passed through the **Preprocessing Manager**
+2. Images that pass validation are forwarded to the **Face Matcher**
+3. InsightFace extracts embeddings and computes similarity
+4. A final decision is made based on a configurable threshold
+
+### Core Logic Diagram
 
 ```mermaid
 graph TD
@@ -86,18 +107,14 @@ graph TD
     I1 --> PM_Start
     I2 --> PM_Start
     
-    PM_End -- "Valid (Success/Warning)" --> FM_Start
-    PM_End -- "Invalid (Error)" --> Error[Return Error Response]
+    PM_End -- "Valid" --> FM_Start
+    PM_End -- "Invalid" --> Error[Return Error]
 
-    Thresh -- "Score > Threshold" --> Match[Match: True]
+    Thresh -- "Score ≥ Threshold" --> Match[Match: True]
     Thresh -- "Score < Threshold" --> NoMatch[Match: False]
 
-    Match --> Result[Return Verification Result]
+    Match --> Result[Return Result]
     NoMatch --> Result
-
-    style Preprocessing_Manager fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style Face_Matcher fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style InsightFace fill:#fff,stroke:#333,stroke-dasharray: 5 5
 ```
 
 ---
@@ -106,73 +123,103 @@ graph TD
 
 ### Prerequisites
 
--   **Python 3.10** is required.
-    -   [Download Python 3.10](https://www.python.org/downloads/release/python-31019/)
+* **Python 3.10**
 
-### 📦 Installation
+  * Required for InsightFace compatibility
+  * 👉 [https://www.python.org/downloads/release/python-31019/](https://www.python.org/downloads/release/python-31019/)
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/SharminNusrat/Face-Verification.git
-    cd Face-Verification
-    ```
+---
 
-2.  **Create a Virtual Environment**
-    ```bash
-    python3.10 -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
+## 📦 Installation
 
-3.  **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    N.B. You might fall into OSError 28 on some linux systems `
-    solution:
-    mkdir ~/pip-tmp
-    export TMPDIR=~/pip-tmp
+### 1. Clone the Repository
 
-### ⚙️ Configuration
+```bash
+git clone https://github.com/SharminNusrat/Face-Verification.git
+cd Face-Verification
+```
 
-Copy the example environment file and configure it:
+### 2. Create & Activate Virtual Environment
+
+```bash
+python3.10 -m venv venv
+source venv/bin/activate
+```
+
+*(Windows: `venv\Scripts\activate`)*
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### ⚠️ Linux Fix: `OSError [Errno 28] No space left on device`
+
+On some Linux systems, `pip` may fail due to limited `/tmp` space.
+
+**Solution:**
+
+```bash
+mkdir -p ~/pip-tmp
+export TMPDIR=~/pip-tmp
+pip install -r requirements.txt
+```
+
+---
+
+## ⚙️ Configuration
+
+Create your environment file:
 
 ```bash
 cp .env.sample .env
 ```
 
-**Environment Variables:**
+### Environment Variables
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `DEVICE` | Computation device (`cpu` or `cuda`) | `cpu` |
-| `ENABLE_MULTIPLE_FACE_DETECTION` | Enable check for multiple faces | `True` |
-| `ENABLE_FACE_GLASS_DETECTION` | Enable check for glasses | `True` |
-| `ENABLE_HEAD_POSE_DETECTION` | Enable check for head orientation | `True` |
-| `MODEL_NAME` | InsightFace model to use | `buffalo_l` |
+| Variable                         | Description                         | Default     |
+| -------------------------------- | ----------------------------------- | ----------- |
+| `DEVICE`                         | Computation device (`cpu` / `cuda`) | `cpu`       |
+| `ENABLE_MULTIPLE_FACE_DETECTION` | Reject multiple faces               | `True`      |
+| `ENABLE_FACE_GLASS_DETECTION`    | Detect glasses                      | `True`      |
+| `ENABLE_HEAD_POSE_DETECTION`     | Detect head pose                    | `True`      |
+| `MODEL_NAME`                     | InsightFace model                   | `buffalo_l` |
 
 ---
 
-## 🏃 Usage
-
-Start the development server using Uvicorn:
+## 🏃 Running the Server
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-The server will start at `http://127.0.0.1:8000`.
+Server will be available at:
 
-### 📡 API Endpoints
+```
+http://127.0.0.1:8000
+```
 
-#### `POST /api/v1/face/verify`
+---
 
-Compares two face images and returns a verification score.
+## 📡 API Reference
 
-**Request:** `multipart/form-data`
--   `image1`: (File) First image.
--   `image2`: (File) Second image.
+### `POST /api/v1/face/verify`
 
-**Response:**
+Verify whether two images belong to the same person.
+
+#### Request
+
+* **Content-Type:** `multipart/form-data`
+* **Parameters:**
+
+  * `image1` — First face image
+  * `image2` — Second face image
+
+#### Response
+
 ```json
 {
   "match": true,
@@ -183,9 +230,27 @@ Compares two face images and returns a verification score.
 
 ---
 
-## Input & Output
+## 🖼️ Example Input & Output
 
-- ![Image 1](data/input/daniel-1.png)
-- ![Image 2](data/input/daniel-2.png)
+<p>
+  <img src="data/output/daniel_result.png" width="520" />
+</p>
 
-- ![Output](data/output/daniel_result.png)
+---
+
+## 🧩 Tech Stack
+
+* **Backend:** FastAPI
+* **Face Recognition:** InsightFace
+* **Language:** Python 3.10
+* **Server:** Uvicorn
+
+---
+
+## 📌 Notes
+
+* Designed for **single-face verification**
+* Preprocessing steps are **fully optional and configurable**
+* Optimized for **accuracy > raw speed**
+* Suitable for **KYC, onboarding, and identity verification systems**
+
