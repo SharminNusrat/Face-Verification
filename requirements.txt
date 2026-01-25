@@ -3,6 +3,9 @@
 
 fastapi
 uvicorn
+pydantic-settings
+tensorflow==2.20.0
+mediapipe==0.10.31
 python-multipart
 insightface
 onnxruntime

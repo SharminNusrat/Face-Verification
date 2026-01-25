@@ -106,15 +106,15 @@ graph TD
 
 ### Prerequisites
 
--   **Python 3.10.19** is required.
-    -   [Download Python 3.10.19](https://www.python.org/downloads/release/python-31019/)
+-   **Python 3.10** is required.
+    -   [Download Python 3.10](https://www.python.org/downloads/release/python-31019/)
 
 ### 📦 Installation
 
 1.  **Clone the repository**
     ```bash
     git clone https://github.com/SharminNusrat/Face-Verification.git
-    cd insightfacebackend
+    cd Face-Verification
     ```
 
 2.  **Create a Virtual Environment**
@@ -127,6 +127,10 @@ graph TD
     ```bash
     pip install -r requirements.txt
     ```
+    N.B. You might fall into OSError 28 on some linux systems `
+    solution:
+    mkdir ~/pip-tmp
+    export TMPDIR=~/pip-tmp
 
 ### ⚙️ Configuration
 
@@ -178,3 +182,10 @@ Compares two face images and returns a verification score.
 ```
 
 ---
+
+## Input & Output
+
+- ![Image 1](data/input/daniel-1.png)
+- ![Image 2](data/input/daniel-2.png)
+
+- ![Output](data/output/daniel_result.png)
