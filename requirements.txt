@@ -1,3 +1,6 @@
+# python 3.10.19 is required to run this project.
+# download link: https://www.python.org/downloads/release/python-31019/
+
 fastapi
 uvicorn
 python-multipart
