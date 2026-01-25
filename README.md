@@ -178,7 +178,3 @@ Compares two face images and returns a verification score.
 ```
 
 ---
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
