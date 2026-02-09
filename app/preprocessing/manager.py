@@ -12,8 +12,21 @@ class PreprocessingManager:
 
     def preprocess(self, image: np.ndarray):
         results = {
-            "status": "success",
-            "checks": {}, # if we want we can remove this. kept for future proofing
+            "status": "0", # 5 == multiple face, 7 glasses and 9 rotated head
+            "checks": {},
+            # results['checks']['face_detection'] ->
+                # "face_count": face_count, # this means results['checks']['face_detection']['face_count'] = face count in the img
+                # "message": message,
+                # "bboxes": bboxes
+            # results['checks']['glass_detection'] ->
+                # "glass_detected": bool(glass_detected),
+                # "score_no_glasses": float(score_no_glasses),
+                # "message": message,
+            # results['checks']['head_pose_detection'] =
+                # "head_pose": text != "Looking Forward",
+                # "message": text,
+                # "angles": (x, y, z)
+        
             "message": ""
         }
 
@@ -22,10 +35,10 @@ class PreprocessingManager:
             results["checks"]["face_detection"] = face_result
             
             if face_result["face_count"] > 1:
-                results["status"] = "severe" #  if we want we can return from here as well
+                results["status"] = "5"
                 results["message"] = face_result["message"]
             elif face_result["face_count"] == 0:
-                results["status"] = "error"
+                results["status"] = "5"
                 results["message"] = "No face detected"
         
         if self.enable_face_glass_detection:
@@ -33,24 +46,33 @@ class PreprocessingManager:
             results["checks"]["glass_detection"] = glass_result
             
             if glass_result["glass_detected"]:
-                 results["status"] = "warning"
-                 current_msg = results.get("message", "")
-                 if current_msg:
-                     results["message"] = f"{current_msg} | {glass_result['message']}"
-                 else:
-                     results["message"] = glass_result["message"]
+                if results['status'] == '0':
+                    results["status"] = "7"
+                else:
+                    results['status'] += '7'
 
-        if self.enable_head_pose_detection: # we can set threshold for yaw, pitch, roll
+                current_msg = results.get("message", "")
+                if current_msg:
+                    results["message"] = f"{current_msg} | {glass_result['message']}"
+                else:
+                    results["message"] = glass_result["message"]
+
+        if self.enable_head_pose_detection: 
             head_pose_result = head_pose_detector.get_direction(image)
             results["checks"]["head_pose_detection"] = head_pose_result
             
             if head_pose_result["head_pose"]:
-                 results["status"] = "warning"
-                 current_msg = results.get("message", "")
-                 if current_msg:
-                     results["message"] = f"{current_msg} | {head_pose_result['message']}"
-                 else:
-                     results["message"] = head_pose_result["message"]
+                if results['status'] == '0':
+                    results['status'] = '9'
+                else:
+                    results["status"] += '9'
+
+
+                current_msg = results.get("message", "")
+                if current_msg:
+                    results["message"] = f"{current_msg} | {head_pose_result['message']}"
+                else:
+                    results["message"] = head_pose_result["message"]
 
         return results
 

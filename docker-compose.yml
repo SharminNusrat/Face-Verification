@@ -1,0 +1,11 @@
+services:
+  face-verification:
+    build: .
+    container_name: face-verification-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data # Persist data folder
+    restart: unless-stopped

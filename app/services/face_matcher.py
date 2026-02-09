@@ -8,9 +8,6 @@ from app.preprocessing import manager as preprocess_manager
 
 class FaceMatcher:
     def __init__(self):
-        # providers options: ['CUDAExecutionProvider', 'CPUExecutionProvider']
-        # We default to CPU to be safe, but user can change if they have GPU setup.
-        # Note: onnxruntime-gpu is needed for CUDA.
         self.app = FaceAnalysis(name=settings.MODEL_NAME)
         self.app.prepare(ctx_id=0, det_size=settings.DET_SIZE)
 
@@ -22,7 +19,7 @@ class FaceMatcher:
         
         faces = self.app.get(img)
         if not faces:
-            return None # No face detected
+            return None 
         
         faces.sort(key=lambda x: (x.bbox[2]-x.bbox[0]) * (x.bbox[3]-x.bbox[1]), reverse=True)
         return faces[0].embedding
@@ -35,6 +32,7 @@ class FaceMatcher:
             return {
                 "match": False,
                 "score": 0.0,
+                "threshold": threshold,
                 "error": "Face not detected in one or both images"
             }
 
@@ -45,7 +43,7 @@ class FaceMatcher:
         return {
             "match": matched,
             "score": float(score),
-            "threshold": threshold
+            "threshold": threshold,
         }
 
 face_matcher = FaceMatcher()

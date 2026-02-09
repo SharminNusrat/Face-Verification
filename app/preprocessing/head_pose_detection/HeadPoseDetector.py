@@ -29,34 +29,26 @@ class HeadPoseDetector:
         Takes a BGR numpy image and returns the direction string.
         Returns: (direction_string, (pitch, yaw, roll))
         """
-        # 1. Convert BGR to RGB
         img_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
         
-        # 2. Convert to MediaPipe Image
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
         
-        # 3. Detect
         detection_result = self.landmarker.detect(mp_image)
 
-        # 4. If no face, return "No Face" with proper dict format
         if not detection_result.face_landmarks:
             return {
-                "head_pose": False,  # Assuming no face detected is handled by face detector, or we could set True if we want to flag it here too. 
-                                     # But if we treat 'head_pose' as 'is_pose_invalid', No Face is technically invalid but maybe redundant. 
-                                     # Let's default to False to avoid overwriting Error with Warning in manager.
+                "head_pose": False,
                 "message": "No Face",
                 "angles": (0, 0, 0)
             }
 
-        # 5. Extract Landmarks & Calculate PnP
         face_landmarks = detection_result.face_landmarks[0] # there are 468 points in the face landmarks
         img_h, img_w, _ = image_bgr.shape
         
         face_3d = []
         face_2d = []
         
-        # Indices: Nose, Chin, Left Eye, Right Eye, Left Mouth, Right Mouth
-        landmark_indices = [1, 199, 33, 263, 61, 291]
+        landmark_indices = [1, 199, 33, 263, 61, 291] # these are the indices of the landmarks used for head pose estimation
 
         for idx in landmark_indices:
             lm = face_landmarks[idx]
@@ -68,7 +60,6 @@ class HeadPoseDetector:
         face_3d = np.array(face_3d, dtype=np.float64)
 
 
-        # from here the super complex logic begins. 
         focal_length = 1 * img_w
         cam_matrix = np.array([[focal_length, 0, img_w / 2],
                                [0, focal_length, img_h / 2],
@@ -77,7 +68,6 @@ class HeadPoseDetector:
 
         success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
         
-        # 6. Calculate Angles
         rmat, jac = cv2.Rodrigues(rot_vec)
         angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
 
@@ -85,9 +75,6 @@ class HeadPoseDetector:
         y = angles[1] * 360 # Yaw
         z = angles[2] * 360 # Roll
 
-        # 7. Determine Direction
-        # Note: If you flip the image BEFORE passing it here, signs might be reversed.
-        # This logic assumes the standard "Mirror" view (user sees themselves like a mirror)
         if y < -horizontal_threshold:
             text = "Looking Left"
         elif y > horizontal_threshold:

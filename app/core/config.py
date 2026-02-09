@@ -6,8 +6,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "InsightFace Verification"
     VERSION: str = "1.0.0"
 
-    model_config = SettingsConfigDict(env_file=".env") # this will load the environment variables from the .env file
-
+    model_config = SettingsConfigDict(env_file=".env") 
+    
     BASE_DIR: Path = Path(__file__).resolve().parent.parent
     DEVICE: str = "cpu"
     ENABLE_MULTIPLE_FACE_DETECTION: bool = True
