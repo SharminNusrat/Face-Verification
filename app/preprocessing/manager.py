@@ -1,4 +1,4 @@
-from app.preprocessing.multiple_face_detection.yolo_face_detector import yolo_face_detector
+from app.preprocessing.multiple_face_detection.insightface_detector import insightface_detector
 from app.preprocessing.face_glass_detection.glass_detector import glass_detector
 from app.preprocessing.head_pose_detection.HeadPoseDetector import head_pose_detector
 from app.core.config import settings
@@ -31,7 +31,7 @@ class PreprocessingManager:
         }
 
         if self.enable_multiple_face_detection:
-            face_result = yolo_face_detector.detect_faces(image)
+            face_result = insightface_detector.detect_faces(image)
             results["checks"]["face_detection"] = face_result
             
             if face_result["face_count"] > 1:

@@ -8,8 +8,8 @@ from app.preprocessing import manager as preprocess_manager
 
 class FaceMatcher:
     def __init__(self):
-        self.app = FaceAnalysis(name=settings.MODEL_NAME)
-        self.app.prepare(ctx_id=0, det_size=settings.DET_SIZE)
+        from app.core.face_app import FaceAppProvider
+        self.app = FaceAppProvider.get_app()
 
     def get_embedding(self, image_bytes: bytes):
         nparr = np.frombuffer(image_bytes, np.uint8)

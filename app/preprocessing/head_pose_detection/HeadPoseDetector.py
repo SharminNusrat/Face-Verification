@@ -1,95 +1,67 @@
 # currently in use.
 import cv2
-import mediapipe as mp
 import numpy as np
-import time
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
+from insightface.app import FaceAnalysis
 
 class HeadPoseDetector:
-    def __init__(self, model_path='./app/preprocessing/head_pose_detection/assets/face_landmarker.task'):
+    def __init__(self):
         """
-        Initializes the MediaPipe FaceLandmarker.
+        Initializes the InsightFace FaceAnalysis app using the FaceAppProvider singleton.
         """
-        base_options = python.BaseOptions(model_asset_path=model_path)
-        options = vision.FaceLandmarkerOptions(
-            base_options=base_options,
-            output_face_blendshapes=False,
-            output_facial_transformation_matrixes=False,
-            num_faces=1,
-            min_face_detection_confidence=0.5,
-            min_face_presence_confidence=0.5,
-            min_tracking_confidence=0.5,
-            running_mode=vision.RunningMode.IMAGE) # Changed to IMAGE mode for single usage
-        
-        self.landmarker = vision.FaceLandmarker.create_from_options(options)
+        from app.core.face_app import FaceAppProvider
+        self.app = FaceAppProvider.get_app()
 
-    def get_direction(self, image_bgr, horizontal_threshold=10, vertical_threshold=20):
+    def get_direction(self, image_bgr, horizontal_threshold=20, vertical_threshold=20):
         """
-        Takes a BGR numpy image and returns the direction string.
+        Takes a BGR numpy image and returns the direction string using InsightFace.
         Returns: (direction_string, (pitch, yaw, roll))
         """
-        img_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-        
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
-        
-        detection_result = self.landmarker.detect(mp_image)
+        faces = self.app.get(image_bgr)
 
-        if not detection_result.face_landmarks:
+        if not faces:
             return {
                 "head_pose": False,
                 "message": "No Face",
                 "angles": (0, 0, 0)
             }
 
-        face_landmarks = detection_result.face_landmarks[0] # there are 468 points in the face landmarks
-        img_h, img_w, _ = image_bgr.shape
+        # Assume the largest face is the target
+        faces.sort(key=lambda x: (x.bbox[2]-x.bbox[0]) * (x.bbox[3]-x.bbox[1]), reverse=True)
+        face = faces[0]
+
+        if face.pose is None:
+             return {
+                "head_pose": False,
+                "message": "Pose Not Detected",
+                "angles": (0, 0, 0)
+            }
+
+        # InsightFace returns pose as [pitch, yaw, roll] in degrees
+        pitch, yaw, roll = face.pose
+
+        # InsightFace co-ordinate system might differ slightly from MediaPipe's
+        # Adjust logic based on standard InsightFace outputs:
+        # Pitch: +ve (Up), -ve (Down)
+        # Yaw: +ve (Right), -ve (Left)
+        # Roll: +ve (Right tilt), -ve (Left tilt)
         
-        face_3d = []
-        face_2d = []
+        # Note: Thresholds might need tuning as InsightFace degrees can be different scale
         
-        landmark_indices = [1, 199, 33, 263, 61, 291] # these are the indices of the landmarks used for head pose estimation
-
-        for idx in landmark_indices:
-            lm = face_landmarks[idx]
-            x, y = int(lm.x * img_w), int(lm.y * img_h)
-            face_2d.append([x, y])
-            face_3d.append([x, y, lm.z])
-            
-        face_2d = np.array(face_2d, dtype=np.float64)
-        face_3d = np.array(face_3d, dtype=np.float64)
-
-
-        focal_length = 1 * img_w
-        cam_matrix = np.array([[focal_length, 0, img_w / 2],
-                               [0, focal_length, img_h / 2],
-                               [0, 0, 1]])
-        dist_matrix = np.zeros((4, 1), dtype=np.float64)
-
-        success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
-        
-        rmat, jac = cv2.Rodrigues(rot_vec)
-        angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
-
-        x = angles[0] * 360 # Pitch # conversion from euler angle to degree
-        y = angles[1] * 360 # Yaw
-        z = angles[2] * 360 # Roll
-
-        if y < -horizontal_threshold:
-            text = "Looking Left"
-        elif y > horizontal_threshold:
+        if yaw > horizontal_threshold:
             text = "Looking Right"
-        elif x < -vertical_threshold:
-            text = "Looking Down"
-        elif x > vertical_threshold:
+        elif yaw < -horizontal_threshold:
+            text = "Looking Left"
+        elif pitch > vertical_threshold:
             text = "Looking Up"
+        elif pitch < -vertical_threshold:
+            text = "Looking Down"
         else:
             text = "Looking Forward"
             
         return {
             "head_pose": text != "Looking Forward",
             "message": text,
-            "angles": (x, y, z)
+            "angles": (float(pitch), float(yaw), float(roll))
         }
 
 head_pose_detector = HeadPoseDetector()
