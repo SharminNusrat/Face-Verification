@@ -60,7 +60,7 @@ graph TD
         PM_Start(Start Preprocessing)
         
         Check1{Multiple Face Detection}
-        YOLO[YOLOv8 Face Detector]
+        IF_Det[InsightFace Detector]
         
         Check2{Glass Detection}
         GD[Glass Detector]
@@ -69,8 +69,8 @@ graph TD
         HPD[Head Pose Detector]
         
         PM_Start --> Check1
-        Check1 -- Enabled --> YOLO
-        YOLO --> Check2
+        Check1 -- Enabled --> IF_Det
+        IF_Det --> Check2
         Check1 -- Disabled --> Check2
         
         Check2 -- Enabled --> GD
@@ -242,6 +242,8 @@ Verify whether two images belong to the same person.
 
 * **Backend:** FastAPI
 * **Face Recognition:** InsightFace
+* **Face Detection:** InsightFace
+* **Glass Detection:** PyTorch (EfficientNet-B0)
 * **Language:** Python 3.10
 * **Server:** Uvicorn
 

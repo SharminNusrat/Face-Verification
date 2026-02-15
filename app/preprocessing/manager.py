@@ -20,7 +20,7 @@ class PreprocessingManager:
                 # "bboxes": bboxes
             # results['checks']['glass_detection'] ->
                 # "glass_detected": bool(glass_detected),
-                # "score_no_glasses": float(score_no_glasses),
+                # "confidence": float(score_glasses),
                 # "message": message,
             # results['checks']['head_pose_detection'] =
                 # "head_pose": text != "Looking Forward",
