@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     ENABLE_HEAD_POSE_DETECTION: bool = True
     # InsightFace model settings
     MODEL_NAME: str = "buffalo_l"
-    GLASS_DETECTION_YOLO_MODEL: str = 'yolov8s' # yolov8n, yolov26n
     DET_SIZE: tuple = (640, 640)
         
 settings = Settings()

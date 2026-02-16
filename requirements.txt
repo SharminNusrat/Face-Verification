@@ -13,3 +13,4 @@ scikit-learn
 pydantic
 torch
 torchvision
+ultralytics

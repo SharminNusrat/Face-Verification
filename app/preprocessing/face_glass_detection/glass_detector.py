@@ -2,54 +2,55 @@ import torch
 from ultralytics import YOLO
 import numpy as np
 from app.core.config import settings
+from app.core.face_app import FaceAppProvider
 import os
 
 class GlassDetector:
     def __init__(
         self,
         threshold: float = 0.5, 
-        input_size: int = 160, 
+        input_size: int = 224, 
     ):
-        model_name = settings.GLASS_DETECTION_YOLO_MODEL
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        # Ensure the model path points to your weights folder
-        model_path = os.path.join(current_dir, "model", f"{model_name}.pt")
+        model_path = "./app/preprocessing/face_glass_detection/model/yolo26x-cls-best.pt"
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.threshold = threshold
         self.input_size = input_size
-        
-        # Load the model once during initialization
+
+        self.app = FaceAppProvider.get_app()
         self.model = YOLO(model_path).to(self.device)
 
     def detect_glass(self, image_numpy: np.ndarray) -> dict:
         """
         Runs inference to specifically detect glasses.
         """
-        # YOLO handles the scaling and normalization internally via predict
+        face = self.app.get(image_numpy)[0]
+
+        bbox = face.bbox.astype(int)
+        x1, y1, x2, y2 = bbox
+
+        padding = 20
+        x1 = max(0, x1 - padding)
+        y1 = max(0, y1 - padding)
+        x2 = min(image_numpy.shape[1], x2 + padding)
+        y2 = min(image_numpy.shape[0], y2 + padding)
+
+        face_crop = image_numpy[y1:y2, x1:x2]
+
         results = self.model.predict(
-            source=image_numpy,
-            imgsz=self.input_size,
-            conf=self.threshold,
-            device=self.device,
-            verbose=False
+            source=face_crop,
+            conf=0.5
         )
         
         result = results[0]
-        detections = []
-
-        for box in result.boxes:
-            # Since nc=1, class_id will always be 0 for 'glasses'
-            detections.append({
-                "box": box.xyxy[0].cpu().numpy().tolist(), # [xmin, ymin, xmax, ymax]
-                "confidence": round(float(box.conf[0]), 4),
-                "label": "glasses"
-            })
+        top_cls_idx = result.probs.top1
+        top_cls_name = result.names[top_cls_idx]
+        confidence = result.probs.top1conf.item()
 
         return {
-            "glass_detected": len(detections) > 0,
-            "confidence": detections[0]['confidence'],
-            "message": "glasses detected."
+            "glass_detected": top_cls_name == "glasses",
+            "confidence": confidence,
+            "message": "glasses detected." if top_cls_name == "glasses" else None
         }
 
 glass_detector = GlassDetector()

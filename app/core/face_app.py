@@ -17,19 +17,9 @@ class FaceAppProvider:
                 if cls._instance is None:
                     print(f"Initializing InsightFace app with model: {settings.MODEL_NAME}")
                     app = FaceAnalysis(name=settings.MODEL_NAME)
-                    # Use ctx_id from settings or default to 0 (GPU 0) or -1 (CPU) depending on config
-                    # Assuming settings.DEVICE might need parsing if it's 'cuda' vs 'cpu'
-                    # insightface uses ctx_id: -1 for CPU, 0+ for GPU
                     
-                    ctx_id = 0 if torch_available_and_cuda() else -1
-                    
-                    # For simplicity, using 0 if cuda is available, else -1 based on simple check
-                    # But verifying 'settings.DEVICE' is safer if that's what we want to rely on.
-                    # Config has prompt "DEVICE: str = 'cpu'". Let's stick to auto-detection or config.
-                    
-                    # Let's perform a robust check or use the config value if mapped.
-                    # Given previous files used ctx_id=0, let's try that first if GPU is desired,
-                    # but safe fallback is important.
+                    ctx_id = 0 if torch_available_and_cuda() else -1 # 0 == GPU | -1 == CPU
+                    # if possible set device in the config.settings file.
                     
                     try:
                         app.prepare(ctx_id=0, det_size=settings.DET_SIZE)

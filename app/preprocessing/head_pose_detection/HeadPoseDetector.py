@@ -2,13 +2,13 @@
 import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
+from app.core.face_app import FaceAppProvider
 
 class HeadPoseDetector:
     def __init__(self):
         """
         Initializes the InsightFace FaceAnalysis app using the FaceAppProvider singleton.
         """
-        from app.core.face_app import FaceAppProvider
         self.app = FaceAppProvider.get_app()
 
     def get_direction(self, image_bgr, horizontal_threshold=20, vertical_threshold=20):
