@@ -16,5 +16,7 @@ class Settings(BaseSettings):
     # InsightFace model settings
     MODEL_NAME: str = "buffalo_l"
     DET_SIZE: tuple = (640, 640)
+    IMG_PADDING_SIZE: str = 40 # px # if the face is cropped tightly around the face. insightface fails to detect face. so adding padding is necessary for niche usecases.
+    SIMILARITY_THRESHOLD: float = 0.5
         
 settings = Settings()

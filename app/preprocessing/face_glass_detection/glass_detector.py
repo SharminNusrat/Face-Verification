@@ -5,7 +5,6 @@ from app.core.config import settings
 from app.core.face_app import FaceAppProvider
 from app.core.logger import logger
 import os
-import cv2
 
 class GlassDetector:
     def __init__(
@@ -14,6 +13,7 @@ class GlassDetector:
         input_size: int = 224, 
     ):
         model_path = "./app/preprocessing/face_glass_detection/model/__yolo26x-cls-best.pt"
+        logger.info(f"{model_path} is initialized..")
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.threshold = threshold
@@ -26,7 +26,6 @@ class GlassDetector:
         """
         Runs inference to specifically detect glasses.
         """
-        image_numpy = cv2.copyMakeBorder(image_numpy, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=[255, 0, 0])
         face = self.app.get(image_numpy)[0]
 
         bbox = face.bbox.astype(int)
@@ -37,8 +36,8 @@ class GlassDetector:
         y1 = max(0, y1 - padding)
         x2 = min(image_numpy.shape[1], x2 + padding)
         y2 = min(image_numpy.shape[0], y2 + padding)
-        logger.info("before face cropping")
         face_crop = image_numpy[y1:y2, x1:x2]
+        logger.info("face have been cropped from the image")
 
         results = self.model.predict(
             source=face_crop,
@@ -49,6 +48,8 @@ class GlassDetector:
         top_cls_idx = result.probs.top1
         top_cls_name = result.names[top_cls_idx]
         confidence = result.probs.top1conf.item()
+
+        logger.info(f"{top_cls_name}->{confidence}")
 
         return {
             "glass_detected": top_cls_name == "glasses",

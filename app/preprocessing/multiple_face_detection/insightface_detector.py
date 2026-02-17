@@ -1,7 +1,9 @@
 from app.core.face_app import FaceAppProvider
+from app.core.logger import logger
 
 class InsightFaceDetector:
     def __init__(self):
+        logger.info("insightface have been created.")
         self.app = FaceAppProvider.get_app()
 
     def detect_faces(self, image_input):
@@ -14,8 +16,6 @@ class InsightFaceDetector:
         face_count = len(faces)
         bboxes = []
         for face in faces:
-            # face.bbox is usually [x1, y1, x2, y2]
-            # Convert to float/int list
             box = face.bbox.astype(int).tolist()
             bboxes.append(box)
 
@@ -26,7 +26,8 @@ class InsightFaceDetector:
             message = "Single face detected."
         else:
             message = "No face detected."
-
+        
+        logger.info(f"{face_count} | {message}") # debugging log
         return {
             "face_count": face_count,
             "message": message,

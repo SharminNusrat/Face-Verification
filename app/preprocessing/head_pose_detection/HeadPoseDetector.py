@@ -1,14 +1,15 @@
 # currently in use.
-import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
 from app.core.face_app import FaceAppProvider
+from app.core.logger import logger
 
 class HeadPoseDetector:
     def __init__(self):
         """
         Initializes the InsightFace FaceAnalysis app using the FaceAppProvider singleton.
         """
+        logger.info("HeadPoseDetector has been initialized.")
         self.app = FaceAppProvider.get_app()
 
     def get_direction(self, image_bgr, horizontal_threshold=20, vertical_threshold=20):
@@ -16,8 +17,9 @@ class HeadPoseDetector:
         Takes a BGR numpy image and returns the direction string using InsightFace.
         Returns: (direction_string, (pitch, yaw, roll))
         """
-        faces = self.app.get(image_bgr)
 
+        faces = self.app.get(image_bgr)
+        logger.info("faces have been extracted.") # debugging log
         if not faces:
             return {
                 "head_pose": False,
@@ -25,10 +27,9 @@ class HeadPoseDetector:
                 "angles": (0, 0, 0)
             }
 
-        # Assume the largest face is the target
-        faces.sort(key=lambda x: (x.bbox[2]-x.bbox[0]) * (x.bbox[3]-x.bbox[1]), reverse=True)
+        # in the image there will only be one face. so No need to sort and get the first
         face = faces[0]
-
+        logger.info("face have been extracted.")
         if face.pose is None:
              return {
                 "head_pose": False,
@@ -38,14 +39,6 @@ class HeadPoseDetector:
 
         # InsightFace returns pose as [pitch, yaw, roll] in degrees
         pitch, yaw, roll = face.pose
-
-        # InsightFace co-ordinate system might differ slightly from MediaPipe's
-        # Adjust logic based on standard InsightFace outputs:
-        # Pitch: +ve (Up), -ve (Down)
-        # Yaw: +ve (Right), -ve (Left)
-        # Roll: +ve (Right tilt), -ve (Left tilt)
-        
-        # Note: Thresholds might need tuning as InsightFace degrees can be different scale
         
         if yaw > horizontal_threshold:
             text = "Looking Right"
@@ -57,7 +50,8 @@ class HeadPoseDetector:
             text = "Looking Down"
         else:
             text = "Looking Forward"
-            
+        
+        logger.info(f"the person is {text}.")
         return {
             "head_pose": text != "Looking Forward",
             "message": text,

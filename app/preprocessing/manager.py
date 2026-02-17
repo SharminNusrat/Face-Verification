@@ -2,17 +2,19 @@ from app.preprocessing.multiple_face_detection.insightface_detector import insig
 from app.preprocessing.face_glass_detection.glass_detector import glass_detector
 from app.preprocessing.head_pose_detection.HeadPoseDetector import head_pose_detector
 from app.core.config import settings
+from app.core.logger import logger
 import numpy as np
 
 class PreprocessingManager:
     def __init__(self):
+        logger.info("Preprocessing manager have been initialized.")
         self.enable_multiple_face_detection = settings.ENABLE_MULTIPLE_FACE_DETECTION
         self.enable_face_glass_detection = settings.ENABLE_FACE_GLASS_DETECTION
         self.enable_head_pose_detection = settings.ENABLE_HEAD_POSE_DETECTION
 
     def preprocess(self, image: np.ndarray):
         results = {
-            "status": "0", # 5 == multiple face, 7 glasses and 9 rotated head
+            "status": "0", # 5 == multiple face, 7 == glasses and 9 == person not looking straight.
             "checks": {},
             # results['checks']['face_detection'] ->
                 # "face_count": face_count, # this means results['checks']['face_detection']['face_count'] = face count in the img
@@ -31,6 +33,7 @@ class PreprocessingManager:
         }
 
         if self.enable_multiple_face_detection:
+            logger.info("detecting if there are multiple faces in the image.")
             face_result = insightface_detector.detect_faces(image)
             results["checks"]["face_detection"] = face_result
             
@@ -42,6 +45,7 @@ class PreprocessingManager:
                 results["message"] = "No face detected"
         
         if self.enable_face_glass_detection:
+            logger.info("detecting if the person is wearing glasses or not.")
             glass_result = glass_detector.detect_glass(image)
             results["checks"]["glass_detection"] = glass_result
             
@@ -58,6 +62,7 @@ class PreprocessingManager:
                     results["message"] = glass_result["message"]
 
         if self.enable_head_pose_detection: 
+            logger.info("detecting head pose. must look straight.")
             head_pose_result = head_pose_detector.get_direction(image)
             results["checks"]["head_pose_detection"] = head_pose_result
             
