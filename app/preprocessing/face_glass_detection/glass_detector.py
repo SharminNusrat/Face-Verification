@@ -3,7 +3,9 @@ from ultralytics import YOLO
 import numpy as np
 from app.core.config import settings
 from app.core.face_app import FaceAppProvider
+from app.core.logger import logger
 import os
+import cv2
 
 class GlassDetector:
     def __init__(
@@ -24,6 +26,7 @@ class GlassDetector:
         """
         Runs inference to specifically detect glasses.
         """
+        image_numpy = cv2.copyMakeBorder(image_numpy, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=[255, 0, 0])
         face = self.app.get(image_numpy)[0]
 
         bbox = face.bbox.astype(int)
@@ -34,7 +37,7 @@ class GlassDetector:
         y1 = max(0, y1 - padding)
         x2 = min(image_numpy.shape[1], x2 + padding)
         y2 = min(image_numpy.shape[0], y2 + padding)
-
+        logger.info("before face cropping")
         face_crop = image_numpy[y1:y2, x1:x2]
 
         results = self.model.predict(
