@@ -11,7 +11,7 @@ class GlassDetector:
         threshold: float = 0.5, 
         input_size: int = 224, 
     ):
-        model_path = "./app/preprocessing/face_glass_detection/model/yolo26x-cls-best.pt"
+        model_path = "./app/preprocessing/face_glass_detection/model/__yolo26x-cls-best.pt"
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.threshold = threshold
